@@ -1,0 +1,14 @@
+/*!* Styles for the app container iframe *!*/
+/*.container iframe:not(.video-iframe) {*/
+/*    width: 1200px; !* Adjust as needed *!*/
+/*    height: 850px; !* Adjust as needed *!*/
+/*}*/
+
+/*!* Style the content *!*/
+/*.content {*/
+/*    text-align: center;*/
+/*    width: 80%;*/
+/*    margin: 0% 10%;*/
+/*    padding-top: 150px;*/
+/*    z-index: 1;*/
+/*}*/

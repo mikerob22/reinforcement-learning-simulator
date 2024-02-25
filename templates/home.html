@@ -1,0 +1,188 @@
+<!-- home.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reinforcement Learning Simulator</title>
+</head>
+<body>
+
+    <h1>Reinforcement Learning Simulator</h1>
+
+    <form id="simulationForm" action="" method="POST" onsubmit="return validateForm() && handleFormSubmission()
+&&submitForm()">
+        <label for="environment">Select Environment:</label>
+        <select name="environment" id="environment">
+            {% for key, value in environments.items() %}
+                <option value="{{ key }}">{{ value }}</option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <label for="Algorithm">Select Algorithm:</label>
+        <select name="algorithm" id="algorithm">
+            {% for key, value in algorithms.items() %}
+                <option value="{{ key }}">{{ value }}</option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <label for="episodes">Number of Episodes:</label>
+        <input type="number" name="episodes" id="episodes" value="{{ episodes }}">
+        <span id="episodesError" style="color: red; display: none;">Please enter a valid number of episodes.</span>
+
+        <br><br>
+
+        <label for="epsilon">Epsilon:</label>
+        <input type="number" name="epsilon" id="epsilon" value="{{ 1 }}" step="any">
+        <span id="epsilonError" style="color: red; display: none;">Please enter a value that is greater than 0 but no greater than 1 .</span>
+
+        <br><br>
+
+        <label for="learning_rate">Learning Rate:</label>
+        <input type="number" name="learning_rate" id="learning_rate" value="{{ 0.9 }}" step="any">
+        <span id="learning_rateError" style="color: red; display: none;">Please enter a value that is greater than 0 but no greater than 1 .</span>
+
+        <br><br>
+
+        <label for="discount_factor">Discount Factor:</label>
+        <input type="number" name="discount_factor" id="discount_factor" value="{{ 0.9 }}" step="any">
+        <span id="discount_factorError" style="color: red; display: none;">Please enter a value that is greater than 0 but no greater than 1 .</span>
+
+        <br><br>
+
+        <label for="mode">Mode:</label>
+        <select name="mode" id="mode">
+            <option value="train">Training</option>
+            <option value="test">Test</option>
+        </select>
+
+        <br><br>
+
+        <!--Submit button-->
+        <input type="submit" value="Run Simulation">
+
+        <!-- Reset button -->
+        <button type="reset" onclick="resetForm()">Reset Form</button>
+
+    </form>
+
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+
+        function validateForm() {
+            var episodesInput = document.getElementById("episodes");
+            var episodesError = document.getElementById("episodesError");
+
+            var epsilonInput = document.getElementById("epsilon")
+            var epsilonError = document.getElementById("epsilonError")
+
+            var learningRateInput = document.getElementById("learning_rate")
+            var learningRateError = document.getElementById("learning_rateError")
+
+            var discountFactorInput = document.getElementById("learning_rate")
+            var discountFactorError = document.getElementById("learning_rateError")
+
+            // Check if the value of the "Number of Episodes" input field is empty or less than 1
+            if (episodesInput.value === "" || parseInt(episodesInput.value) < 1) {
+                episodesError.style.display = "block"; // Show the error message
+                return false; // Prevent form submission
+            }
+            else {
+                episodesError.style.display = "none"; // Hide the error message
+                }
+
+            // Check if the value of the "Epsilon" input field is empty or less than 0
+            var epsilonValue = parseFloat(epsilonInput.value)
+            if (epsilonInput.value === "" || epsilonValue <= 0 || epsilonValue > 1) {
+                epsilonError.style.display = "block"; // Show the error message
+                return false; // Prevent form submission
+            } else {
+                epsilonError.style.display = "none"; // Hide the error message
+            }
+
+            var learningRateValue = parseFloat(learningRateInput.value)
+            if (learningRateInput.value === "" || learningRateValue <= 0 || learningRateValue > 1) {
+                learningRateError.style.display = "block"; // Show the error message
+                return false; // Prevent form submission
+            } else {
+                learningRateError.style.display = "none"; // Hide the error message
+            }
+
+            var discountFactorValue = parseFloat(discountFactorInput.value)
+            if (discountFactorInput.value === "" || discountFactorValue <= 0 || discountFactorValue > 1) {
+                discountFactorError.style.display = "block"; // Show the error message
+                return false; // Prevent form submission
+            } else {
+                discountFactorError.style.display = "none"; // Hide the error message
+            }
+
+            return true; // Allow form submission
+        }
+
+        function handleFormSubmission() {
+            var mode = document.getElementById("mode").value;
+            var form = document.getElementById("simulationForm");
+
+            // Set the action attribute based on the selected mode
+            if (mode === "train") {
+                form.action = "/views/simulate"; // Route for training mode
+            } else if (mode === "test") {
+                form.action = "/views/testing"; // Route for testing mode
+            }
+
+            return true; // Allow the form submission to proceed
+        }
+
+        function resetForm() {
+            document.getElementById("simulationForm").reset();
+
+            // Clear cookies
+            var cookies = document.cookie.split("; ");
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i];
+                var eqPos = cookie.indexOf("=");
+                var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+            }
+
+            // Clear browser cache
+            window.location.reload(true); // Force reload to clear cache
+
+            // Delay the redirection by 100 milliseconds (adjust as needed)
+            setTimeout(function() {
+                window.location.href = "/views/"; // Redirect to the main route
+            }, 100);
+        }
+
+        function submitForm(event) {
+            // Prevent the default form submission behavior
+            event.preventDefault();
+
+            // Serialize form data
+            var formData = new FormData(document.getElementById('simulationForm'));
+
+            // Submit form data asynchronously using AJAX
+            fetch('/submit-form', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                // Handle the response as needed
+                console.log('Form submitted successfully');
+            })
+            .catch(error => {
+                // Handle any errors
+                console.error('Error submitting form:', error);
+            });
+        }
+
+    </script>
+
+</body>
+</html>

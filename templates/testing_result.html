@@ -1,0 +1,17 @@
+<!-- testing_result.html -->
+{% extends 'home.html' %}
+
+{% block content %}
+
+    <div>
+        <h2>Testing Run</h2>
+            <p>Does the agent make it to the goal in one episode?</p>
+
+            <h1 style="color: blue">Rendered Simulation</h1>
+
+                <video width="700px" height="400px" controls loop>
+                <source src="{{ video_path }}" type="video/mp4" />
+                </video>
+    </div>
+
+{% endblock %}
