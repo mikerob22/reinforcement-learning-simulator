@@ -1,19 +1,19 @@
 import gymnasium as gym
 import numpy as np
 import matplotlib.pyplot as plt
-from gymnasium.wrappers import RecordVideo
 import pickle
+from gymnasium.wrappers import RecordVideo
 
 
 def run(episodes, epsilon, learning_rate, discount_factor, is_training):
 
-    env = gym.make("CliffWalking-v0", render_mode=None if is_training else 'rgb_array')
+    env = gym.make('FrozenLake-v1', map_name="8x8", is_slippery=False, render_mode=None if is_training else 'rgb_array')
 
     if is_training:
-        q = np.zeros((env.observation_space.n, env.action_space.n))  # init cliff walking env array
+        q = np.zeros((env.observation_space.n, env.action_space.n))  # init a 64 x 4 array
     else:
         env = RecordVideo(env, 'static/uploads')
-        f = open("static/uploads/cliff_walking_sarsa.pkl", "rb")
+        f = open("static/uploads/frozen_lake_sarsa.pkl", "rb")
         q = pickle.load(f)
         f.close()
 
@@ -24,19 +24,18 @@ def run(episodes, epsilon, learning_rate, discount_factor, is_training):
             action = int(np.random.randint(low=0, high=4, size=1))
         return action
 
-    # PARAMETERS
-    # epsilon_decay_rate = 0.0001
-    # EPSILON = 0.1       # 1 = argmax, pick optimal action
-    # ALPHA = 0.1
-    # GAMMA = 1
+    # learning_rate_a = 0.9  # alpha / learning rate
+    # discount_factor_g = 0.9  # gamma/discount rate. Near 0: more weight put on now state.Near 1: more on future state.
+    # epsilon = 1         # 1 = 100% random actions
+    # epsilon_decay_rate = 0.0001        # epsilon decay rate. 1/0.0001 = 10,000
 
     rewards_per_episode = np.zeros(episodes)
 
     for i in range(episodes):
-        state = env.reset()[0]  # initial state
+        state = env.reset()[0]  # states: 0 to 63, 0=top left corner,63=bottom right corner
         total_reward_per_eps = 0
-        terminated = False      # True when fall off cliff or reached goal
-        truncated = False       # True when actions > 200
+        terminated = False      # True when fall in hole or reached goal
+        truncated = False       # True when actions > some amount of steps
 
         action = policy(state, epsilon)
 
@@ -51,7 +50,7 @@ def run(episodes, epsilon, learning_rate, discount_factor, is_training):
                 next_action = policy(new_state, epsilon)
 
                 q[state][action] += learning_rate * (
-                            reward + discount_factor * q[new_state][next_action] - q[state][action])
+                        reward + discount_factor * q[new_state][next_action] - q[state][action])
                 action = next_action
             else:
                 action = np.argmax(q[state, :])
@@ -61,11 +60,10 @@ def run(episodes, epsilon, learning_rate, discount_factor, is_training):
         # epsilon = max(epsilon - epsilon_decay_rate, 0)
 
         # if epsilon == 0:
-        #     learning_rate = 0.0001
-
+        #     learning_rate_a = 0.0001
         rewards_per_episode[i] = total_reward_per_eps
-
-        # print("Episode:", i, "Total Reward:", total_reward_per_eps, "Optimal Policy Action:", action)
+        # if reward == 1:
+        #     rewards_per_episode[i] = 1
 
     env.close()
     # print(rewards_per_episode)
@@ -85,12 +83,11 @@ def run(episodes, epsilon, learning_rate, discount_factor, is_training):
         # plt.plot(rewards_per_episode, label='Rewards per Episode')
         plt.xlabel('Episodes')
         plt.ylabel('Sum of Rewards')
-        plt.title('Training Progress : Cliff Walking - SARSA')
-        plt.savefig('static/uploads/cliff_walking_sarsa.png')
+        plt.title('Training Progress : Frozen Lake - SARSA')
+        plt.savefig('static/uploads/frozen_lake_sarsa.png')
         plt.show()
 
     if is_training:
-        f = open('static/uploads/cliff_walking_sarsa.pkl', "wb")
+        f = open("static/uploads/frozen_lake_sarsa.pkl", "wb")
         pickle.dump(q, f)
         f.close()
-        print("Training Complete. Q Table saved.")

@@ -10,6 +10,7 @@ pygame.init()
 # Define available environments
 ENVIRONMENTS = {
     "CliffWalking-v0": "Cliff Walking",
+    "FrozenLake-v1": "Frozen Lake",
     # Add more environments as needed
 }
 
@@ -20,11 +21,20 @@ ALGORITHMS = {
     # Add more environments as needed
 }
 
+MAPS = {
+    "8x8": "8 x 8",
+    "5x5": "5 x 5"
+}
+
 # Define mappings between environment and the corresponding Python files containing algorithm implementations
 ENVIRONMENT_TO_ALGORITHM_MODULE = {
     "CliffWalking-v0": {
         "QLearning": "cliff_walking_q_learning",
         "SARSA": "cliff_walking_sarsa",
+    },
+    "FrozenLake-v1": {
+        "QLearning": "frozen_lake_q_learning",
+        "SARSA": "frozen_lake_sarsa",
     },
     # Add more environment-algorithm mappings as needed
 }
@@ -71,10 +81,14 @@ def simulate():
     training_duration = round(end_time - start_time, 3)
 
     # Determine the file path based on the selected algorithm
-    if algorithm == "QLearning":
+    if algorithm == "QLearning" and environment == "CliffWalking-v0":
         figure_path = "static/uploads/cliff_walking_Qlearning.png"
-    elif algorithm == "SARSA":
+    elif algorithm == "SARSA" and environment == "CliffWalking-v0":
         figure_path = "static/uploads/cliff_walking_sarsa.png"
+    elif algorithm == "QLearning" and environment == "FrozenLake-v1":
+        figure_path = "static/uploads/frozen_lake_QLearning.png"
+    elif algorithm == "SARSA" and environment == "FrozenLake-v1":
+        figure_path = "static/uploads/frozen_lake_sarsa.png"
 
     # Render HTML template with training information
     return render_template("training_result.html", environments=ENVIRONMENTS, algorithms=ALGORITHMS,
@@ -89,7 +103,7 @@ def testing():
     environment, algorithm, episodes, epsilon, learning_rate, discount_factor, mode, is_training = process_form_data(request)
 
     test = run_algorithm(environment, algorithm, episodes=1, epsilon=epsilon, learning_rate=learning_rate,
-                         discount_factor=discount_factor, is_training=is_training)
+                         discount_factor=discount_factor, is_training=False)
 
     # Determine the file path based on the selected algorithm
     if algorithm == "QLearning":

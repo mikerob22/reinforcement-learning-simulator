@@ -9,23 +9,23 @@
 
     <h1>Reinforcement Learning Simulator</h1>
 
-    <form id="simulationForm" action="" method="POST" onsubmit="return validateForm() && handleFormSubmission()
-&&submitForm()">
-        <label for="environment">Select Environment:</label>
-        <select name="environment" id="environment">
+    <form id="simulationForm" action="" method="POST" onsubmit="return validateForm() && handleFormSubmission() && submitForm()">
+        <label>Select Environment:</label><br>
             {% for key, value in environments.items() %}
-                <option value="{{ key }}">{{ value }}</option>
-            {% endfor %}
-        </select>
 
+                <input type="radio" id="environment_{{ key }}" class="environment-radio" name="environment" value="{{ key }}">
+                <label for="environment_{{ key }}">{{ value }}</label><br>
+
+            {% endfor %}
+        <span id="environmentError" style="color: red; display: none;">Please enter an environment.</span>
         <br><br>
 
-        <label for="Algorithm">Select Algorithm:</label>
-        <select name="algorithm" id="algorithm">
+        <label>Select Algorithm:</label><br>
             {% for key, value in algorithms.items() %}
-                <option value="{{ key }}">{{ value }}</option>
+                <input type="radio" id="algorithm_{{ key }}" class="algorithm-radio" name="algorithm" value="{{ key }}">
+                <label for="algorithm_{{ key }}">{{ value }}</label><br>
             {% endfor %}
-        </select>
+        <span id="algorithmError" style="color: red; display: none;">Please enter an algorithm.</span>
 
         <br><br>
 
@@ -36,19 +36,19 @@
         <br><br>
 
         <label for="epsilon">Epsilon:</label>
-        <input type="number" name="epsilon" id="epsilon" value="{{ 1 }}" step="any">
+        <input type="number" name="epsilon" id="epsilon" value="{{ 0.1 }}" step="any">
         <span id="epsilonError" style="color: red; display: none;">Please enter a value that is greater than 0 but no greater than 1 .</span>
 
         <br><br>
 
         <label for="learning_rate">Learning Rate:</label>
-        <input type="number" name="learning_rate" id="learning_rate" value="{{ 0.9 }}" step="any">
+        <input type="number" name="learning_rate" id="learning_rate" value="{{ 0.1 }}" step="any">
         <span id="learning_rateError" style="color: red; display: none;">Please enter a value that is greater than 0 but no greater than 1 .</span>
 
         <br><br>
 
         <label for="discount_factor">Discount Factor:</label>
-        <input type="number" name="discount_factor" id="discount_factor" value="{{ 0.9 }}" step="any">
+        <input type="number" name="discount_factor" id="discount_factor" value="{{ 1 }}" step="any">
         <span id="discount_factorError" style="color: red; display: none;">Please enter a value that is greater than 0 but no greater than 1 .</span>
 
         <br><br>
@@ -76,6 +76,14 @@
     <script>
 
         function validateForm() {
+            var environmentInputs = document.querySelectorAll('.environment-radio');
+            var environmentError = document.getElementById("environmentError");
+            var selectedEnvironment = false;
+
+            var algorithmInputs = document.querySelectorAll('.algorithm-radio');
+            var algorithmError = document.getElementById("algorithmError");
+            var selectedAlgorithm = false;
+
             var episodesInput = document.getElementById("episodes");
             var episodesError = document.getElementById("episodesError");
 
@@ -85,8 +93,34 @@
             var learningRateInput = document.getElementById("learning_rate")
             var learningRateError = document.getElementById("learning_rateError")
 
-            var discountFactorInput = document.getElementById("learning_rate")
-            var discountFactorError = document.getElementById("learning_rateError")
+            var discountFactorInput = document.getElementById("discount_factor")
+            var discountFactorError = document.getElementById("discount_factorError")
+
+            environmentInputs.forEach(function(input) {
+                if (input.checked) {
+                    selectedEnvironment = true;
+                }
+            });
+
+            if (!selectedEnvironment) {
+                environmentError.style.display = "block"; // Show the error message
+                return false; // Prevent form submission
+            } else {
+            environmentError.style.display = "none"; // Hide the error message
+            }
+
+            algorithmInputs.forEach(function(input) {
+                if (input.checked) {
+                    selectedAlgorithm = true;
+                }
+            });
+
+            if (!selectedAlgorithm) {
+                algorithmError.style.display = "block"; // Show the error message
+                return false; // Prevent form submission
+            } else {
+            algorithmError.style.display = "none"; // Hide the error message
+            }
 
             // Check if the value of the "Number of Episodes" input field is empty or less than 1
             if (episodesInput.value === "" || parseInt(episodesInput.value) < 1) {
@@ -172,7 +206,7 @@
                 method: 'POST',
                 body: formData
             })
-            .then(response => {
+            .then(() => {
                 // Handle the response as needed
                 console.log('Form submitted successfully');
             })
