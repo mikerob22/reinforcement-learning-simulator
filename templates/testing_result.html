@@ -1,5 +1,4 @@
 <!-- testing_result.html -->
-{% extends 'home.html' %}
 
 {% block content %}
 
@@ -12,6 +11,8 @@
                 <video width="700px" height="400px" controls loop>
                 <source src="{{ video_path }}" type="video/mp4" />
                 </video>
+
+                <a href="{{ video_path }}" download class="download-button">Download Video</a>
     </div>
 
 {% endblock %}

@@ -2,6 +2,9 @@ from flask import Blueprint, render_template, request, send_from_directory
 import time
 import pygame
 
+import socketio_instance
+from functions import *
+
 views = Blueprint("views", __name__)
 
 # Pygame initialization
@@ -80,15 +83,12 @@ def simulate():
     end_time = time.time()
     training_duration = round(end_time - start_time, 3)
 
+    # Emit task complete event
+    total_steps = 1000  # Total number of steps in the simulation
+    # socketio_instance.simulation_progress(total_steps)
+
     # Determine the file path based on the selected algorithm
-    if algorithm == "QLearning" and environment == "CliffWalking-v0":
-        figure_path = "static/uploads/cliff_walking_Qlearning.png"
-    elif algorithm == "SARSA" and environment == "CliffWalking-v0":
-        figure_path = "static/uploads/cliff_walking_sarsa.png"
-    elif algorithm == "QLearning" and environment == "FrozenLake-v1":
-        figure_path = "static/uploads/frozen_lake_QLearning.png"
-    elif algorithm == "SARSA" and environment == "FrozenLake-v1":
-        figure_path = "static/uploads/frozen_lake_sarsa.png"
+    figure_path = get_figure_path(environment, algorithm)
 
     # Render HTML template with training information
     return render_template("training_result.html", environments=ENVIRONMENTS, algorithms=ALGORITHMS,
@@ -105,13 +105,12 @@ def testing():
     test = run_algorithm(environment, algorithm, episodes=1, epsilon=epsilon, learning_rate=learning_rate,
                          discount_factor=discount_factor, is_training=False)
 
-    # Determine the file path based on the selected algorithm
-    if algorithm == "QLearning":
-        video_path = "static/uploads/rl-video-episode-0.mp4"
-    elif algorithm == "SARSA":
-        video_path = "static/uploads/rl-video-episode-0.mp4"
+    # Emit task complete event
+    total_steps = 500  # Total number of steps in the test
+    # socketio_instance.test_progress(total_steps)
 
-    # video_url = "/static/uploads/rl-video-episode-0.mp4"
+    # Determine the file path based on the selected algorithm
+    video_path = get_video_path(algorithm)
 
     return render_template("testing_result.html", episodes=episodes, epsilon=epsilon,
                            learning_rate=learning_rate, discount_factor=discount_factor, environments=ENVIRONMENTS,
@@ -139,28 +138,3 @@ def run_algorithm(environment, algorithm, episodes, epsilon, learning_rate, disc
         return f"Environment '{environment}' is not supported."
 
 
-# def run_algorithm(environment, episodes, epsilon, learning_rate, discount_factor, is_training):
-#     # Define a mapping of environments to corresponding Q-learning implementation files
-#     environment_to_q_learning_file = {
-#         "CliffWalking-v0": "cliff_walking_q_learning.py",
-#         # Add more environment-Q-learning file mappings as needed
-#     }
-#
-#     # Get the Q-learning implementation file for the specified environment
-#     q_learning_file = environment_to_q_learning_file.get(environment)
-#
-#     if q_learning_file is None:
-#         # Handle the case where the environment is not found in the mapping
-#         return "Error: Q-learning implementation not found for the specified environment."
-#
-#     # Import the Q-learning implementation module dynamically
-#     try:
-#         q_learning_module = __import__(q_learning_file[:-3])  # Remove ".py" extension
-#     except ImportError:
-#         # Handle the case where the Q-learning implementation file cannot be imported
-#         return "Error: Failed to import Q-learning implementation for the specified environment."
-#
-#     q_learning_module.run(episodes, epsilon, learning_rate, discount_factor, is_training)
-#
-#     progress_messages = [f"Episode {i + 1} completed." for i in range(episodes)]
-#     return progress_messages

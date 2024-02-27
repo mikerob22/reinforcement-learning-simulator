@@ -1,5 +1,4 @@
 <!-- training_result.html -->
-{% extends 'home.html' %}
 
 {% block content %}
 <div>
@@ -10,5 +9,8 @@
           <!-- Display the plot image in an iframe -->
       <h3>Training Progress</h3>
       <iframe src="{{ figure_path }}" width="100%" height="600" frameborder="0"></iframe>
+
+        <a href="{{ figure_path }}" download class="download-button">Download Image </a>
+
 </div>
 {% endblock %}

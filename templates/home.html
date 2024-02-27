@@ -1,80 +1,116 @@
-<!-- home.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
     <title>Reinforcement Learning Simulator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
+
 <body>
+    <div class="container">
+        <div class="header-container">
+            <h1>Reinforcement Learning Simulator</h1>
+        </div>
 
-    <h1>Reinforcement Learning Simulator</h1>
+        <div class="overlay-container">
+            <h2>Overlay Content</h2>
+            <!-- Additional content for the overlay container -->
+        </div>
 
-    <form id="simulationForm" action="" method="POST" onsubmit="return validateForm() && handleFormSubmission() && submitForm()">
-        <label>Select Environment:</label><br>
-            {% for key, value in environments.items() %}
+        <div class="form-render-container">
+            <div class="form-container">
+                <!-- form elements go here -->
+                  <form id="simulationForm" onsubmit="return validateForm() && handleFormSubmission()">
 
-                <input type="radio" id="environment_{{ key }}" class="environment-radio" name="environment" value="{{ key }}">
-                <label for="environment_{{ key }}">{{ value }}</label><br>
+                      <div class="radio-group">
+                      <label>Select Environment:</label>
+                      {% for key, value in environments.items() %}
+                          <label>
+                              <input type="radio" id="environment_{{ key }}" class="environment-radio" name="environment" value="{{ key }}">
+                              {{ value }}
+                          </label>
+                      {% endfor %}
+                      </div>
 
-            {% endfor %}
-        <span id="environmentError" style="color: red; display: none;">Please enter an environment.</span>
-        <br><br>
+                  <span id="environmentError" style="color: red; display: none;">Please enter an environment.</span>
 
-        <label>Select Algorithm:</label><br>
-            {% for key, value in algorithms.items() %}
-                <input type="radio" id="algorithm_{{ key }}" class="algorithm-radio" name="algorithm" value="{{ key }}">
-                <label for="algorithm_{{ key }}">{{ value }}</label><br>
-            {% endfor %}
-        <span id="algorithmError" style="color: red; display: none;">Please enter an algorithm.</span>
+                  <br><br>
 
-        <br><br>
+                      <div class="radio-group">
+                          <label>Select Algorithm:</label>
+                            {% for key, value in algorithms.items() %}
+                                <label>
+                                <input type="radio" id="algorithm_{{ key }}" class="algorithm-radio" name="algorithm" value="{{ key }}">
+                                {{ value }}
+                                </label>
+                            {% endfor %}
+                      </div>
 
-        <label for="episodes">Number of Episodes:</label>
-        <input type="number" name="episodes" id="episodes" value="{{ episodes }}">
-        <span id="episodesError" style="color: red; display: none;">Please enter a valid number of episodes.</span>
+                  <span id="algorithmError" style="color: red; display: none;">Please enter an algorithm.</span>
 
-        <br><br>
+                  <br><br>
 
-        <label for="epsilon">Epsilon:</label>
-        <input type="number" name="epsilon" id="epsilon" value="{{ 0.1 }}" step="any">
-        <span id="epsilonError" style="color: red; display: none;">Please enter a value that is greater than 0 but no greater than 1 .</span>
+                  <label for="episodes">Number of Episodes:</label>
+                  <input type="number" name="episodes" id="episodes" value="{{ episodes }}">
+                  <span id="episodesError" style="color: red; display: none;">Please enter a valid number of episodes.</span>
 
-        <br><br>
+                  <br><br>
 
-        <label for="learning_rate">Learning Rate:</label>
-        <input type="number" name="learning_rate" id="learning_rate" value="{{ 0.1 }}" step="any">
-        <span id="learning_rateError" style="color: red; display: none;">Please enter a value that is greater than 0 but no greater than 1 .</span>
+                  <label for="epsilon">Epsilon:</label>
+                  <input type="number" name="epsilon" id="epsilon" value="{{ 0.1 }}" step="any">
+                  <span id="epsilonError" style="color: red; display: none;">Please enter a value that is greater than 0 but no greater than 1 .</span>
 
-        <br><br>
+                  <br><br>
 
-        <label for="discount_factor">Discount Factor:</label>
-        <input type="number" name="discount_factor" id="discount_factor" value="{{ 1 }}" step="any">
-        <span id="discount_factorError" style="color: red; display: none;">Please enter a value that is greater than 0 but no greater than 1 .</span>
+                  <label for="learning_rate">Learning Rate:</label>
+                  <input type="number" name="learning_rate" id="learning_rate" value="{{ 0.1 }}" step="any">
+                  <span id="learning_rateError" style="color: red; display: none;">Please enter a value that is greater than 0 but no greater than 1 .</span>
 
-        <br><br>
+                  <br><br>
 
-        <label for="mode">Mode:</label>
-        <select name="mode" id="mode">
-            <option value="train">Training</option>
-            <option value="test">Test</option>
-        </select>
+                  <label for="discount_factor">Discount Factor:</label>
+                  <input type="number" name="discount_factor" id="discount_factor" value="{{ 1 }}" step="any">
+                  <span id="discount_factorError" style="color: red; display: none;">Please enter a value that is greater than 0 but no greater than 1 .</span>
 
-        <br><br>
+                  <br><br>
 
-        <!--Submit button-->
-        <input type="submit" value="Run Simulation">
+                  <label for="mode">Mode:</label>
+                  <select name="mode" id="mode">
+                      <option value="train">Training</option>
+                      <option value="test">Test</option>
+                  </select>
 
-        <!-- Reset button -->
-        <button type="reset" onclick="resetForm()">Reset Form</button>
+                  <br><br>
 
-    </form>
+                  <!--Submit button-->
+                  <input type="submit" value="Run Simulation">
 
-    <div id="content">
-        {% block content %}{% endblock %}
+                  <!-- Reset button -->
+                  <button type="reset" onclick="resetForm()">Reset Form</button>
+
+              </form>
+
+            </div>
+
+            <div class="render-container">
+
+                <h2>Results</h2>
+                <!-- video or plot will load here -->
+                <div id="output-content">
+
+                <div id="result"></div>
+
+            </div>
+
+        </div>
+
+        </div>
+
+        </div>
+
     </div>
 
     <script>
-
         function validateForm() {
             var environmentInputs = document.querySelectorAll('.environment-radio');
             var environmentError = document.getElementById("environmentError");
@@ -163,15 +199,41 @@
             var mode = document.getElementById("mode").value;
             var form = document.getElementById("simulationForm");
 
-            // Set the action attribute based on the selected mode
+            // Prepare form data
+            var formData = new FormData(form);
+
+            // Set the route based on the selected mode
+            var route;
             if (mode === "train") {
-                form.action = "/views/simulate"; // Route for training mode
+            route = "/views/simulate"; // Route for training mode
             } else if (mode === "test") {
-                form.action = "/views/testing"; // Route for testing mode
+                route = "/views/testing"; // Route for testing mode
             }
 
-            return true; // Allow the form submission to proceed
+            // Make the fetch request
+            fetch(route, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.text();
+            })
+            .then(data => {
+                // Insert the response HTML into the current document
+                document.getElementById("result").innerHTML = data;
+            })
+            .catch(error => {
+                // Handle error
+                console.error("Error:", error);
+            });
+
+            // Prevent the default form submission
+            return false;
         }
+
 
         function resetForm() {
             document.getElementById("simulationForm").reset();
@@ -193,30 +255,56 @@
                 window.location.href = "/views/"; // Redirect to the main route
             }, 100);
         }
-
-        function submitForm(event) {
-            // Prevent the default form submission behavior
-            event.preventDefault();
-
-            // Serialize form data
-            var formData = new FormData(document.getElementById('simulationForm'));
-
-            // Submit form data asynchronously using AJAX
-            fetch('/submit-form', {
-                method: 'POST',
-                body: formData
-            })
-            .then(() => {
-                // Handle the response as needed
-                console.log('Form submitted successfully');
-            })
-            .catch(error => {
-                // Handle any errors
-                console.error('Error submitting form:', error);
-            });
-        }
-
     </script>
 
 </body>
+
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
