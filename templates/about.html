@@ -1,10 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'home.html' %}
+
+{% block main_content %}
+
+<div class="pageContainer">
+    <h2> About the Reinforcement Learning Simulator</h2>
+
+    <p>
+    This simulator was created by <a href="/contact">Michael Roberts</a> as a personal project while taking
+    a graduate level Reinforcement Learning class. The main goal was to implement new things learned
+    in a deployed web environment. This simulator is for educational purposes for users see how different policies
+    learned using different parameters change the behavior of the agent during the training process. There are tons
+    of different environments that can be added or used for Reinforcement Learning but the goal was to create something
+    simple.
+
+    The environments and coding documentation referenced in this project came from the python package
+    <a href="https://gymnasium.farama.org/">gymnasium</a>. Feel free to reach out to me on
+    <a href="https://www.linkedin.com/in/michael-r0berts/"> LinkedIn</a>!
+
+    </p>
+
+
+</div>
+
+
+{% endblock %}

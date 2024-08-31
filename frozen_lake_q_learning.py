@@ -1,6 +1,8 @@
 import gymnasium as gym
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
 import pickle
 from gymnasium.wrappers import RecordVideo
 
@@ -17,8 +19,8 @@ def run(episodes, epsilon, learning_rate, discount_factor, is_training):
         q = pickle.load(f)
         f.close()
 
-    # learning_rate_a = 0.9  # alpha / learning rate
-    # discount_factor_g = 0.9  # gamma/discount rate. Near 0: more weight put on now state.Near 1: more on future state.
+    # learning_rate = 0.9  # alpha / learning rate
+    # discount_factor = 0.9  # gamma/discount rate. Near 0: more weight put on now state.Near 1: more on future state.
     # epsilon = 1         # 1 = 100% random actions
     epsilon_decay_rate = 0.0001        # epsilon decay rate. 1/0.0001 = 10,000
     rng = np.random.default_rng()   # random number generator
@@ -29,6 +31,7 @@ def run(episodes, epsilon, learning_rate, discount_factor, is_training):
         state = env.reset()[0]  # states: 0 to 63, 0=top left corner,63=bottom right corner
         terminated = False      # True when fall in hole or reached goal
         truncated = False       # True when actions > 200
+        total_reward = 0
 
         while not terminated and not truncated:
             if is_training and rng.random() < epsilon:
@@ -38,6 +41,8 @@ def run(episodes, epsilon, learning_rate, discount_factor, is_training):
 
             new_state, reward, terminated, truncated, _ = env.step(action)
             #  print("New state: ", new_state, "Reward: ", reward)  # Debug print
+
+            total_reward += reward
 
             if is_training:
                 q[state, action] = q[state, action] + learning_rate * (
@@ -49,7 +54,7 @@ def run(episodes, epsilon, learning_rate, discount_factor, is_training):
         epsilon = max(epsilon - epsilon_decay_rate, 0)
 
         if epsilon == 0:
-            learning_rate_a = 0.0001
+            learning_rate = 0.0001
 
         if reward == 1:
             rewards_per_episode[i] = 1
@@ -74,7 +79,7 @@ def run(episodes, epsilon, learning_rate, discount_factor, is_training):
         plt.ylabel('Sum of Rewards')
         plt.title('Training Progress : Frozen Lake - Q_Learning')
         plt.savefig('static/uploads/frozen_lake_QLearning.png')
-        plt.show()
+        #plt.show()
 
     if is_training:
         f = open("static/uploads/frozen_lake_QLearning.pkl", "wb")
@@ -83,5 +88,5 @@ def run(episodes, epsilon, learning_rate, discount_factor, is_training):
 
 
 # if __name__ == '__main__':
-    # run(1, is_training=False, render=True)
-    # run(1000, is_training=True, render=False)
+    # run(1, 1, 0.9, 0.9, is_training=False)
+    # run(10000, 1, 0.9, 0.9, is_training=True)

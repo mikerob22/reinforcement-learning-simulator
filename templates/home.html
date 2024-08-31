@@ -13,9 +13,21 @@
         </div>
 
         <div class="overlay-container">
-            <h2>Overlay Content</h2>
+            <nav class="navbar">
+                <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/environments">Environments</a></li>
+            <li><a href="/contact">Contact</a></li>
+                </ul>
+            </nav>
             <!-- Additional content for the overlay container -->
         </div>
+
+        {% block main_content %}
+            <div id="content">
+                {% block content %}{% endblock %}
+            </div>
 
         <div class="form-render-container">
             <div class="form-container">
@@ -51,31 +63,32 @@
                   <br><br>
 
                   <label for="episodes">Number of Episodes:</label>
-                  <input type="number" name="episodes" id="episodes" value="{{ episodes }}">
+                  <input type="number" placeholder="Enter a number of episodes for training." name="episodes" id="episodes" value="{{ episodes }}" >
                   <span id="episodesError" style="color: red; display: none;">Please enter a valid number of episodes.</span>
 
                   <br><br>
 
                   <label for="epsilon">Epsilon:</label>
-                  <input type="number" name="epsilon" id="epsilon" value="{{ 0.1 }}" step="any">
+                  <input type="number" placeholder="Enter a value of epsilon from 0 to 1." name="epsilon" id="epsilon" value="{{ epsilon }}" step="any">
                   <span id="epsilonError" style="color: red; display: none;">Please enter a value that is greater than 0 but no greater than 1 .</span>
 
                   <br><br>
 
                   <label for="learning_rate">Learning Rate:</label>
-                  <input type="number" name="learning_rate" id="learning_rate" value="{{ 0.1 }}" step="any">
+                  <input type="number" placeholder="Enter a value of a learning rate (alpha) from 0 to 1." name="learning_rate" id="learning_rate" value="{{ learning_rate }}" step="any">
                   <span id="learning_rateError" style="color: red; display: none;">Please enter a value that is greater than 0 but no greater than 1 .</span>
 
                   <br><br>
 
                   <label for="discount_factor">Discount Factor:</label>
-                  <input type="number" name="discount_factor" id="discount_factor" value="{{ 1 }}" step="any">
+                  <input type="number" placeholder="Enter a value of a discount factor (gamma) from 0 to 1." name="discount_factor" id="discount_factor" value="{{ discount_factor }}" step="any">
                   <span id="discount_factorError" style="color: red; display: none;">Please enter a value that is greater than 0 but no greater than 1 .</span>
 
                   <br><br>
 
                   <label for="mode">Mode:</label>
                   <select name="mode" id="mode">
+                      <option value="" disabled selected>Select a mode.</option>
                       <option value="train">Training</option>
                       <option value="test">Test</option>
                   </select>
@@ -96,19 +109,27 @@
 
                 <h2>Results</h2>
                 <!-- video or plot will load here -->
-                <div id="output-content">
+                <!-- Spinner element -->
+                <div id="spinner" class="spinner">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
 
+                <p style="color: red"> Make sure a training simulation is done and renders a plot before running the
+                simulation in test mode. <a href="/about">Click here</a> to see a trial run.</p>
+
+                <div id="output-content">
                 <div id="result"></div>
 
-            </div>
-
-        </div>
+                </div>
 
         </div>
 
         </div>
 
     </div>
+
 
     <script>
         function validateForm() {
@@ -195,6 +216,18 @@
             return true; // Allow form submission
         }
 
+        // JavaScript to show/hide spinner
+        function showSpinner() {
+            document.getElementById("spinner").style.display = "block";
+        }
+
+        function hideSpinner() {
+            document.getElementById("spinner").style.display = "none";
+        }
+
+        // Call showSpinner() when background process starts
+        // Call hideSpinner() when background process completes
+
         function handleFormSubmission() {
             var mode = document.getElementById("mode").value;
             var form = document.getElementById("simulationForm");
@@ -205,11 +238,12 @@
             // Set the route based on the selected mode
             var route;
             if (mode === "train") {
-            route = "/views/simulate"; // Route for training mode
+            route = "/simulate"; // Route for training mode
             } else if (mode === "test") {
-                route = "/views/testing"; // Route for testing mode
+                route = "/testing"; // Route for testing mode
             }
 
+            showSpinner()
             // Make the fetch request
             fetch(route, {
                 method: "POST",
@@ -222,10 +256,12 @@
                 return response.text();
             })
             .then(data => {
+                hideSpinner()
                 // Insert the response HTML into the current document
                 document.getElementById("result").innerHTML = data;
             })
             .catch(error => {
+                hideSpinner()
                 // Handle error
                 console.error("Error:", error);
             });
@@ -252,10 +288,12 @@
 
             // Delay the redirection by 100 milliseconds (adjust as needed)
             setTimeout(function() {
-                window.location.href = "/views/"; // Redirect to the main route
+                window.location.href = "/"; // Redirect to the main route
             }, 100);
         }
     </script>
+
+        {% endblock %}
 
 </body>
 

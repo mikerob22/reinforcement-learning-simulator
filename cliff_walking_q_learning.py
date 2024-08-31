@@ -1,6 +1,8 @@
 import gymnasium as gym
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
 import pickle
 from gymnasium.wrappers import RecordVideo
 # import os
@@ -82,7 +84,7 @@ def run(episodes, epsilon, learning_rate, discount_factor, is_training):
         plt.legend()
         plt.title('Training Progress : Cliff Walking - Q-Learning')
         plt.savefig('static/uploads/cliff_walking_QLearning.png')
-        plt.show()
+        #plt.show()
 
     if is_training:
         f = open("static/uploads/cliff_walking_QLearning.pkl", "wb")

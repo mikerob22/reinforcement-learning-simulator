@@ -1,10 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'home.html' %}
+
+{% block main_content %}
+
+<div class="pageContainer">
+
+    <h2>Contact</h2>
+
+    <div class="imageContainer">
+        <img src= "{{ url_for('static', filename='uploads/headshot.png') }}">
+    </div>
+
+    <p>
+        I recently graduated from the University of Florida with a degree in Materials Science and Engineering.
+        I'm now an Associate Engineer at NextEra Energy - Florida Power and Light, working in Power Delivery and
+        Transmission Engineering. My academic journey at UF provided me with a solid foundation in engineering,
+        complemented by research experiences in areas like Magnetic Barkhausen Noise (MBN), Artificial Intelligence,
+        and Engineering Education. In my current role, I'm contributing to NextEra Energy's mission of transforming
+        and progressing the energy industry. It's an exciting start to my engineering career, and I'm eager to learn
+        and grow. I'm committed to continuous professional development and aspire to explore new opportunities and
+        make a positive impact in the industry. While working as a Transmission Engineer,
+        I am pursuing a Master of Science in Artificial Intelligence at Florida Atlantic University to immerse myself
+        in the fast-growing field of AI. I plan to use concepts learned to develop professionally and apply my skills
+        in industry.
+
+    </p>
+    <p>
+        Let's Connect:
+        I'm open to connecting with fellow professionals, mentors, and those interested in engineering, energy,
+        or education. Feel free to reach out for networking, advice, or collaboration opportunities.
+    </p>
+    <p>
+        <a href="https://www.linkedin.com/in/michael-r0berts/"> LinkedIn</a>
+    </p>
+
+    <p>
+        <a href="https://github.com/mikerob22?tab=repositories"> GitHub</a>
+    </p>
+</div>
+
+
+{% endblock %}

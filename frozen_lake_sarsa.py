@@ -1,6 +1,8 @@
 import gymnasium as gym
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
 import pickle
 from gymnasium.wrappers import RecordVideo
 
@@ -85,7 +87,7 @@ def run(episodes, epsilon, learning_rate, discount_factor, is_training):
         plt.ylabel('Sum of Rewards')
         plt.title('Training Progress : Frozen Lake - SARSA')
         plt.savefig('static/uploads/frozen_lake_sarsa.png')
-        plt.show()
+        # plt.show()
 
     if is_training:
         f = open("static/uploads/frozen_lake_sarsa.pkl", "wb")
